@@ -1,4 +1,4 @@
-# Getting Started with Docker and Nginx
+# Getting Started with Docker: Nginx and WordPress
 
 ## What is Docker?
 
@@ -11,6 +11,7 @@ A container is a lightweight, standalone unit where an application runs with all
 ## What Does Docker Do?
 
 Docker:
+
 - Creates and manages containers
 - Includes all dependencies and configuration within the container
 - Enables starting, stopping, and networking these containers easily
@@ -25,18 +26,24 @@ ports:
 ```
 
 It means:
-- Port 8080 on the host (your VM) is opened
-- Requests to http://<VM-IP>:8080 are forwarded by Docker to port 80 in the container inside the container, an Nginx web server listens on port 80 and serves the content
 
-## Example Project Structure with Nginx
-```yaml
+- Port 8080 on the host (your VM) is opened
+- Requests to `http://<VM-IP>:8080` are forwarded by Docker to port 80 in the container. Inside the container, an Nginx web server listens on port 80 and serves the content.
+
+## Example 1: Static Website with Nginx
+
+### Project Structure
+
+```
 nginx-test/
 ├── docker-compose.yml
 └── html/
     └── index.html
 ```
-```
-Example docker-compose.yml
+
+### docker-compose.yml
+
+```yaml
 version: "3.8"
 
 services:
@@ -47,8 +54,10 @@ services:
     volumes:
       - ./html:/usr/share/nginx/html:ro
 ```
-```
-Example index.html
+
+### index.html
+
+```html
 <!DOCTYPE html>
 <html>
   <head><title>Hello Docker</title></head>
@@ -56,15 +65,16 @@ Example index.html
 </html>
 ```
 
-## How to Access the Website from the Host
+### Access the Website from the Host
 
 - Open a browser on your host machine (e.g., 42 school computer)
-- Go to: http://<VM-IP>:8080
+- Go to: `http://<VM-IP>:8080`
 - You should see the HTML page served by Nginx running in a Docker container
 
-(Docker öffnet Port 8080 meiner VM und leitet Anfragen an den Container Port 80 von nginx weiter)
+### Visual Overview:
+
 ```
-[ Host (z. B. 42-Rechner) ]
+[ Host (e.g. 42-Rechner) ]
             |
       http://10.12.249.125:8080
             |
@@ -76,244 +86,188 @@ Example index.html
      index.html
 ```
 
-## Essential Docker Commands
+---
 
-Command
+## Example 2: WordPress + MariaDB
 
-Description
+This example sets up a working WordPress website with a MariaDB database.
 
-docker compose up -d
+### Project Structure:
 
-Start containers in detached mode
-
-docker compose down
-
-Stop and remove containers
-
-docker ps
-
-List running containers
-
-docker images
-
-List downloaded Docker images
-
-docker logs <container-name>
-
-Show logs of a specific container
-
-docker exec -it <container> sh
-
-Open a shell inside a running container
-
-## Listing running containers
 ```
-docker ps
-```
-```
-output:
-CONTAINER ID   IMAGE           NAME                ...
-a1b2c3d4e5f6   mariadb:10.5    wordpress-test-db   ...
-```
-
-Getting into the Terminal of the container and looking into MySql:
-```
-docker exec -it wordpress-test-db bash
-```
-
-To ooen the mariaDB console:
-```
-(Enter the password mentioned in the .env file)
-mysql -u wp_user -p
-
-After that the following will be shown:
-MariaDB [(none)]>
-```
-
-Switching in the DB and showing tables:
-```
-USE wordpress;
-SHOW TABLES;
-
-e.g. following output:
-+-----------------------+
-| Tables_in_wordpress   |
-+-----------------------+
-| wp_posts              |
-| wp_users              |
-| wp_options            |
-...
-
-Request something e.g.:
-SELECT post_title FROM wp_posts WHERE post_status = 'publish';
-
-To see published posts of the WordPress site in the terminal
-```
-
-Exiting MySql and the container:
-```
-exit
-exit
-```
-
-## Finding Docker Volumes on the VM
-/var/lib/docker/volumes/
-
-Having a volume of db_data you can find it under:
-/var/lib/docker/volumes/db_data/_data/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-It means:
-- Port 8080 on the host (your VM) is opened
-- Requests to http://<VM-IP>:8080 are forwarded by Docker to port 80 in the container inside the container, an Nginx web server listens on port 80 and serves the content
-
-## Example Project Structure with Nginx
-```yaml
-nginx-test/
+wordpress-test/
 ├── docker-compose.yml
-└── html/
-    └── index.html
+└── .env
 ```
+
+### .env File
+
+```dotenv
+MYSQL_ROOT_PASSWORD=rootpass
+MYSQL_DATABASE=wordpress
+MYSQL_USER=wp_user
+MYSQL_PASSWORD=wp_pass
+
+WORDPRESS_DB_HOST=db
+WORDPRESS_DB_USER=wp_user
+WORDPRESS_DB_PASSWORD=wp_pass
+WORDPRESS_DB_NAME=wordpress
 ```
-Example docker-compose.yml
+
+### docker-compose.yml
+
+```yaml
 version: "3.8"
 
 services:
-  nginx:
-    image: nginx:alpine
+  db:
+    image: mariadb:10.5
+    restart: always
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:php8.0-apache
+    restart: always
+    env_file: .env
     ports:
       - "8080:80"
-    volumes:
-      - ./html:/usr/share/nginx/html:ro
-```
-```
-Example index.html
-<!DOCTYPE html>
-<html>
-  <head><title>Hello Docker</title></head>
-  <body><h1>It works!</h1></body>
-</html>
+    depends_on:
+      - db
+
+volumes:
+  db_data:
 ```
 
-## How to Access the Website from the Host
+### Start the Services
 
-- Open a browser on your host machine (e.g., 42 school computer)
-- Go to: http://<VM-IP>:8080
-- You should see the HTML page served by Nginx running in a Docker container
-
-(Docker öffnet Port 8080 meiner VM und leitet Anfragen an den Container Port 80 von nginx weiter)
-```
-[ Host (z. B. 42-Rechner) ]
-            |
-      http://10.12.249.125:8080
-            |
-[ VM ] -- Port 8080 --> [ Docker Engine ]
-                           |
-                           v
-[ Container: Nginx ] <-- Port 80
-          |
-     index.html
-```
-
-## Essential Docker Commands
-
-Command
-
-Description
-
+```bash
+cd wordpress-test
 docker compose up -d
-
-Start containers in detached mode
-
-docker compose down
-
-Stop and remove containers
-
-docker ps
-
-List running containers
-
-docker images
-
-List downloaded Docker images
-
-docker logs <container-name>
-
-Show logs of a specific container
-
-docker exec -it <container> sh
-
-Open a shell inside a running container
-
-## Listing running containers
-```
-docker ps
-```
-```
-output:
-CONTAINER ID   IMAGE           NAME                ...
-a1b2c3d4e5f6   mariadb:10.5    wordpress-test-db   ...
 ```
 
-Getting into the Terminal of the container and looking into MySql:
+### Access WordPress in the Browser
+
+- Open a browser on your host
+- Go to: `http://<VM-IP>:8080`
+- The WordPress setup wizard should appear
+
+---
+
+## Why is Docker useful here?
+
+- You don't need to manually install Apache, PHP, MySQL
+- It's easy to reset everything with `docker compose down`
+- Your data is kept safe in a volume even if the containers stop
+- You can move this setup to any machine in seconds
+
+---
+
+## Why was there no .env file in Example 1?
+
+Because Nginx (static site) didn’t need any configuration variables or passwords. Everything was handled with defaults and volumes. In Example 2, `.env` is essential for passing secure credentials and database connection settings.
+
+---
+
+## What does `restart: always` do?
+
+Ensures the container is automatically restarted:
+
+- After a crash
+- After the VM or Docker restarts
+
+---
+
+## What does `volumes: db_data:` do?
+
+- Declares a named volume used by the database container
+- It stores database files outside the container (in the VM)
+- Yes: the data is persistent – even if the container is deleted
+
+Find it here:
+
 ```
+/var/lib/docker/volumes/db_data/_data/
+```
+
+Inside you'll find `.ibd`, `.frm`, and other MariaDB files
+
+---
+
+## Docker Essentials (Summary)
+
+### Useful Commands
+
+| Command                        | Description                        |
+| ------------------------------ | ---------------------------------- |
+| `docker compose up -d`         | Start containers in background     |
+| `docker compose down`          | Stop and remove all containers     |
+| `docker ps`                    | List running containers            |
+| `docker images`                | List all downloaded Docker images  |
+| `docker logs <name>`           | Show logs of a specific container  |
+| `docker exec -it <name> sh`    | Start shell in a running container |
+| `docker volume inspect <name>` | Show info (and path) for a volume  |
+
+### Inspect MariaDB via Docker
+
+```bash
+docker ps  # Get container name
 docker exec -it wordpress-test-db bash
+mysql -u wp_user -p  # Enter password from .env
 ```
 
-To ooen the mariaDB console:
-```
-(Enter the password mentioned in the .env file)
-mysql -u wp_user -p
+Then:
 
-After that the following will be shown:
-MariaDB [(none)]>
-```
-
-Switching in the DB and showing tables:
-```
+```sql
 USE wordpress;
 SHOW TABLES;
-
-e.g. following output:
-+-----------------------+
-| Tables_in_wordpress   |
-+-----------------------+
-| wp_posts              |
-| wp_users              |
-| wp_options            |
-...
-
-Request something e.g.:
 SELECT post_title FROM wp_posts WHERE post_status = 'publish';
-
-To see published posts of the WordPress site in the terminal
 ```
 
-Exiting MySql and the container:
-```
+Exit:
+
+```sql
 exit
 exit
 ```
 
-## Finding Docker Volumes on the VM
-/var/lib/docker/volumes/
+---
 
-Having a volume of db_data you can find it undet:
-/var/lib/docker/volumes/db_data/_data/
+## Questions & Answers (Learned Along the Way)
 
-Dort sind z. B. bei MariaDB alle Datenbankdateien gespeichert (z. B. .frm, .ibd, ib_logfile, mysql, etc.).
+### Why not just install WordPress on the VM?
 
+You could, but:
 
+- Docker is faster, cleaner, easier to reproduce
+- No manual dependency management
+- Easy to reset and share with others
 
+### What does port 8080 mean?
+
+- 8080 is **opened on the VM** by Docker
+- It forwards requests to **port 80 inside the container** (where Nginx or Apache runs)
+
+### Who is listening on which port?
+
+| Port | Where            | Listener                              |
+| ---- | ---------------- | ------------------------------------- |
+| 8080 | On the VM        | Docker listens, forwards to container |
+| 80   | Inside container | Nginx or Apache                       |
+
+### Why no nginx + MariaDB example?
+
+Because:
+
+- MariaDB is a **database**, not a web application
+- Nginx is a **webserver**, not a database client
+- They don’t interact directly – you need an app (like WordPress) in between
+
+### How do I inspect volume contents?
+
+```bash
+sudo ls /var/lib/docker/volumes/db_data/_data
+```
+
+---
