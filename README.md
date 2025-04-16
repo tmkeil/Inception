@@ -105,3 +105,215 @@ Show logs of a specific container
 docker exec -it <container> sh
 
 Open a shell inside a running container
+
+## Listing running containers
+```
+docker ps
+```
+```
+output:
+CONTAINER ID   IMAGE           NAME                ...
+a1b2c3d4e5f6   mariadb:10.5    wordpress-test-db   ...
+```
+
+Getting into the Terminal of the container and looking into MySql:
+```
+docker exec -it wordpress-test-db bash
+```
+
+To ooen the mariaDB console:
+```
+(Enter the password mentioned in the .env file)
+mysql -u wp_user -p
+
+After that the following will be shown:
+MariaDB [(none)]>
+```
+
+Switching in the DB and showing tables:
+```
+USE wordpress;
+SHOW TABLES;
+
+e.g. following output:
++-----------------------+
+| Tables_in_wordpress   |
++-----------------------+
+| wp_posts              |
+| wp_users              |
+| wp_options            |
+...
+
+Request something e.g.:
+SELECT post_title FROM wp_posts WHERE post_status = 'publish';
+
+To see published posts of the WordPress site in the terminal
+```
+
+Exiting MySql and the container:
+```
+exit
+exit
+```
+
+## Finding Docker Volumes on the VM
+/var/lib/docker/volumes/
+
+Having a volume of db_data you can find it under:
+/var/lib/docker/volumes/db_data/_data/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+It means:
+- Port 8080 on the host (your VM) is opened
+- Requests to http://<VM-IP>:8080 are forwarded by Docker to port 80 in the container inside the container, an Nginx web server listens on port 80 and serves the content
+
+## Example Project Structure with Nginx
+```yaml
+nginx-test/
+├── docker-compose.yml
+└── html/
+    └── index.html
+```
+```
+Example docker-compose.yml
+version: "3.8"
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+```
+```
+Example index.html
+<!DOCTYPE html>
+<html>
+  <head><title>Hello Docker</title></head>
+  <body><h1>It works!</h1></body>
+</html>
+```
+
+## How to Access the Website from the Host
+
+- Open a browser on your host machine (e.g., 42 school computer)
+- Go to: http://<VM-IP>:8080
+- You should see the HTML page served by Nginx running in a Docker container
+
+(Docker öffnet Port 8080 meiner VM und leitet Anfragen an den Container Port 80 von nginx weiter)
+```
+[ Host (z. B. 42-Rechner) ]
+            |
+      http://10.12.249.125:8080
+            |
+[ VM ] -- Port 8080 --> [ Docker Engine ]
+                           |
+                           v
+[ Container: Nginx ] <-- Port 80
+          |
+     index.html
+```
+
+## Essential Docker Commands
+
+Command
+
+Description
+
+docker compose up -d
+
+Start containers in detached mode
+
+docker compose down
+
+Stop and remove containers
+
+docker ps
+
+List running containers
+
+docker images
+
+List downloaded Docker images
+
+docker logs <container-name>
+
+Show logs of a specific container
+
+docker exec -it <container> sh
+
+Open a shell inside a running container
+
+## Listing running containers
+```
+docker ps
+```
+```
+output:
+CONTAINER ID   IMAGE           NAME                ...
+a1b2c3d4e5f6   mariadb:10.5    wordpress-test-db   ...
+```
+
+Getting into the Terminal of the container and looking into MySql:
+```
+docker exec -it wordpress-test-db bash
+```
+
+To ooen the mariaDB console:
+```
+(Enter the password mentioned in the .env file)
+mysql -u wp_user -p
+
+After that the following will be shown:
+MariaDB [(none)]>
+```
+
+Switching in the DB and showing tables:
+```
+USE wordpress;
+SHOW TABLES;
+
+e.g. following output:
++-----------------------+
+| Tables_in_wordpress   |
++-----------------------+
+| wp_posts              |
+| wp_users              |
+| wp_options            |
+...
+
+Request something e.g.:
+SELECT post_title FROM wp_posts WHERE post_status = 'publish';
+
+To see published posts of the WordPress site in the terminal
+```
+
+Exiting MySql and the container:
+```
+exit
+exit
+```
+
+## Finding Docker Volumes on the VM
+/var/lib/docker/volumes/
+
+Having a volume of db_data you can find it undet:
+/var/lib/docker/volumes/db_data/_data/
+
+Dort sind z. B. bei MariaDB alle Datenbankdateien gespeichert (z. B. .frm, .ibd, ib_logfile, mysql, etc.).
+
+
+
