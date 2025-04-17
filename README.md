@@ -3,6 +3,8 @@
 ## What is Docker?
 
 Docker is a platform that allows you to run applications in isolated environments called **containers**. These containers include everything needed to run the application (web server, runtime, libraries), without installing them directly on the host system.
+1. Docker is a set of tools to deliver software in containers.
+2. Docker is a set of tools to deliver software in containers.
 
 ## What is a Container?
 
