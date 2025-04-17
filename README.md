@@ -9,6 +9,46 @@ Docker is a platform that allows you to run applications in isolated environment
 ## What is a Container?
 
 A container is a lightweight, standalone unit where an application runs with all its dependencies (e.g., Nginx, PHP, database). Containers are similar to virtual machines but are much more resource-efficient and faster to start.
+Containers only contain what is required to execute an application. They are isolated environments in the host machine with the ability to interact with each other and the host machine itself via defined methods (TCP/UDP).
+```
+docker image ls -a (-a: listing running images)
+```
+
+## What is an Image?
+
+Containers are created from images. A Dockerfile is an instruction set for building an image. Images are written by the machine based on the dockerfile.
+```
+docker container ls -a (-a: listing running containers)
+docker ps
+docker container rm <id>
+If you have hundreds of stopped containers and you wish to delete them all, you should use:
+docker container prune / docker image prune
+docker system prune
+
+To bring it back:
+docker image pull hello-world
+```
+
+### Most used commands
+
+| Command                        | Description                        |
+| ------------------------------ | ---------------------------------- |
+| `docker image ls`         | Lists all images	docker images     |
+| `docker image rm <image>`          | Removes an image	docker     |
+| `docker image pull <image>`                    | Pulls image from a docker registry	docker pull            |
+| `docker container ls -a` or docker ps -a                | Lists all containers  |
+| `docker container run <image>` or `docker run`            | Runs a container from an image  |
+| `docker container rm <container` or `docker rm`   | Removes a container |
+| `docker container stop <container>` or `docker stop` | Stops a container  |
+| `docker container exec <container>` or `docker exec` | Executes a command inside the container  |
+
+
+ <image>	
+docker container ls -a	Lists all containers	docker ps -a
+docker container run <image>	Runs a container from an image	docker run
+docker container rm <container>	Removes a container	docker rm
+docker container stop <container>	Stops a container	docker stop
+docker container exec <container>	Executes a command inside the container 	docker exec
 
 ## What Does Docker Do?
 
