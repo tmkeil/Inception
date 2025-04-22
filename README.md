@@ -34,7 +34,7 @@ docker image pull hello-world
 | Command                        | Description                        |
 | ------------------------------ | ---------------------------------- |
 | `docker image ls`         | Lists all images	docker images     |
-| `docker image rm <image>`          | Removes an image	docker     |
+| `docker image rm <image>` or `docker rmi <imgage>`        | Removes an image	docker     |
 | `docker image pull <image>`                    | Pulls image from a docker registry	docker pull            |
 | `docker container ls -a` or docker ps -a                | Lists all containers  |
 | `docker container run <image>` or `docker run`            | Runs a container from an image  |
