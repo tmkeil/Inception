@@ -45,11 +45,11 @@ docker image pull hello-world
 If the image isn't running any service as with the case with ubuntu, then you can instruct docker to run a process.
 Execute a command when you run the container:
 ```
-docker run ubuntu sleep 5
+docker run ubuntu sleep 100
 ```
 To execute a command on a running container:
 ```
-docker exec <container name> <command>
+docker exec <container name or container id> <command> => for example cat /etc/*release*
 ```
 A container lives just as long as the process inside it is alive
 This is why, when you run a container from an ubuntu image, it stops immidiatly. Because ubuntu is just an image of an operating system that is used as the base image for other applications.
@@ -79,6 +79,23 @@ To automatically log in in a container for example:
 ```
 docker run -it centos bash
 ```
+
+## Run a redis container
+```
+docker run --name my-redis -p 6379:6379 -d redis
+```
+--name <name> (sets the name of the container)
+-p <portnumber:portnumber> (sets the portnumber)
+-d (run in attached mode)
+redis (docker image)
+
+docker exec -it my-redis redis-cli
+
+When running:
+```
+docker run redis:4.0
+```
+it specifies the version of redis (4.0) ':' is called a tag
 ## What Does Docker Do?
 
 Docker:
