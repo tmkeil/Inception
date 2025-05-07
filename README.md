@@ -33,23 +33,52 @@ docker image pull hello-world
 
 | Command                        | Description                        |
 | ------------------------------ | ---------------------------------- |
-| `docker image ls`         | Lists all images	docker images     |
+| `docker image ls` or `docker images`        | Lists all images	docker images     |
 | `docker image rm <image>` or `docker rmi <imgage>`        | Removes an image	docker     |
 | `docker pull <image>`                    | Pulls image from a docker registry	docker pull            |
 | `docker container ls -a` or docker ps -a                | Lists all containers  |
 | `docker container run <image>` or `docker run`            | Runs a container from an image  |
-| `docker container rm <container` or `docker rm`   | Removes a container |
-| `docker container stop <container>` or `docker stop` | Stops a container  |
+| `docker container rm <container` or `docker rm <container>`   | Removes a container |
+| `docker container stop <container>` or `docker stop <container>` | Stops a container  |
 | `docker container exec <container>` or `docker exec` | Executes a command inside the container  |
 
+If the image isn't running any service as with the case with ubuntu, then you can instruct docker to run a process.
+Execute a command when you run the container:
+```
+docker run ubuntu sleep 5
+```
+To execute a command on a running container:
+```
+docker exec <container name> <command>
+```
+A container lives just as long as the process inside it is alive
+This is why, when you run a container from an ubuntu image, it stops immidiatly. Because ubuntu is just an image of an operating system that is used as the base image for other applications.
+There is no process or application in it running by default.
 
+---
  <image>	
 docker container ls -a	Lists all containers	docker ps -a
 docker container run <image>	Runs a container from an image	docker run
 docker container rm <container>	Removes a container	docker rm
 docker container stop <container>	Stops a container	docker stop
 docker container exec <container>	Executes a command inside the container 	docker exec
+ 
+To run a container in detached mode:
+```
+docker run -d <image>
+```
 
+To attach back to the running detached container run:
+```
+docker attach <name or id (first few character alone) of the running container>
+```
+
+To explore the available images (names) that can be run go to: hub.docker.com/explore
+
+To automatically log in in a container for example:
+```
+docker run -it centos bash
+```
 ## What Does Docker Do?
 
 Docker:
