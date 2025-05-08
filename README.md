@@ -96,6 +96,15 @@ When running:
 docker run redis:4.0
 ```
 it specifies the version of redis (4.0) ':' is called a tag
+
+To run a container in interactive mode together with 't' it is attached to the terminal:
+```
+docker run -it <image>
+```
+
+When you have a simple prompt program, when running, it aks for an input and shows that input then in the terminal. When you want to dockerize that application and run it as a docker container like : ``docker run tkeil/application``,
+the docker container doesn't listen for inputs. It doesn't have a terminal to read input from. 
+
 ## What Does Docker Do?
 
 Docker:
