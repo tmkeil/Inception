@@ -156,7 +156,21 @@ examples:
 ```
 EXPOSE 8080 => exposes port 8080 inside the container
 WORKDIR /opt => ...
-ENTRYPOINT ["python", "app.py"] => defines 2 commands to run the a service inside a container
+ENTRYPOINT ["python", "app.py"] => defines 2 commands to run the a service inside a container.
+CMD ["executable", "param1"] => Runs this default command, when running the container. When you specify the command in an array format, the first element is the executable, the second the param1... => ["sleep", "5"]
+
+Now: If you only specify only ENTRYPOINT without CMD like:
+ENTRYPOINT ["sleep"]
+and run the container: docker run <image> 10
+it uses the 10 as an argument for the sleep executable. But without the 10 specified, you would get an error.
+
+Together with the CMD option:
+ENTRYPOINT ["sleep"]
+CMD ["5"]
+you can set the 5 as a default value for the sleep executable and it would be overwritten when you run the container by giving for e.g. the 10 as a parameter.
+
+If you want to change the ENTRYPOINT, when you run the container, you can do it with the --entrypoint another_command
+
 ```
 FROM Ubuntu => defines what the base operating system should be for this container. All Dockerfiles must start with a `FROM` instruction.
 Every docker image must be based off from another docker image. Either an os or another image that was created before based on an os.
@@ -169,6 +183,10 @@ To make this image available on the public docker hub, run the docker push comma
 
 When docker builds the images, it builds these in a layered architecture. Each line of instruction creates a new layer in the docker image with just the changes from the previous layers. You can see the information of the layers by running `docker history <image name>`
 So when you stop a build process, it wouldn't has to start all over again, but just from the previous layer saved in the image.
+
+## Environment variables
+With docker you can run: `docker run -e APP_COLOR=blue <image>`
+'-e VAR_NAME=val' you can set environment variables, that can be used by the program/container. 
 
 ## What Does Docker Do?
 
