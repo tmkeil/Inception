@@ -97,13 +97,35 @@ docker run redis:4.0
 ```
 it specifies the version of redis (4.0) ':' is called a tag
 
+When you have a simple prompt program, when running, it aks for an input and shows that input then in the terminal. When you want to dockerize that application and run it as a docker container like : ``docker run tkeil/application``,
+the docker container doesn't listen for inputs. It doesn't have a terminal to read input from. For this, run the application in interactive mode with attached to the terminal.
 To run a container in interactive mode together with 't' it is attached to the terminal:
 ```
 docker run -it <image>
 ```
 
-When you have a simple prompt program, when running, it aks for an input and shows that input then in the terminal. When you want to dockerize that application and run it as a docker container like : ``docker run tkeil/application``,
-the docker container doesn't listen for inputs. It doesn't have a terminal to read input from. 
+## Port Mapping
+The underlying host, where docker is installed is called docker host or docker engine.
+When we run a containerized web application, it runs and we are able to see, that the server is running. But how does a user access the application?
+When the applcation run on: ``http://0.0.0.0:5000/``, the application listens on port 5000. So one can access the application by accessing port 5000.
+But what IP to use, for accessing it from a web browser? There are 2 options:
+- 1: use the ip of the docker container (every container gets an ip assigned by default e.g: 172.17.0.2). This ip is an internal ip and is only accessable within the docker host. So for example in a browser inside the docker engine, you can go to http://172.17.0.2:5000 but from outside the engine, this doesn't work.
+- For this you can use the ip of the docker host e.g.: 192.168.1.5: But for that to work, you must have mapped the port from inside the docker container to a free port on the docker host. For example, if a user wants to access the app through port 80 from the host, you must port 80 from the docker engine to port 5000 from the container. This is done like that: ``docker run -p 80:5000 <image> ``. In this case a user from outside the docker host can go to: ``http://192.168.1.5:80`` and can connect to the application.
+- You can not port more than 2 applications to the same port on the docker host.
+
+## Volume mapping (making data persistent)
+When you run docker run mysql, the data is stored inside /var/lib/mysql inside the docker container. (The docker container has its own isolated file system).
+When you delete the mysql container and remove it, the container along with all the data inside it gets blown away. If you would like to persist data, you'd like to map a directory outside the container on the docker host to a directory inside the container.
+Create a directory on the docker host: /opt/datadir/ and map that to /var/lib/mysql/ is done with '-v' option: ``docker run -v /opt/datadir/:/var/lib/mysql/ mysql``.
+Is this way, when docker container runs, it will implicitly mount the external directory to a folder inside the docker container. In this way, all the data will now be stored in the external volume.
+
+## Inspect a container
+The docker ps command is good enough to get basic details about names and ids. But if you'd like to see additional details use: docker inspect <docker name or id>
+It returns all data in a json format like state, mounts, configurations, network settings ...
+
+## Container logs
+How to see the logs of a container, that runs in the background for example if it runs in detached mode?
+Use: docker logs <container name or id>
 
 ## What Does Docker Do?
 
