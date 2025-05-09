@@ -103,6 +103,7 @@ To run a container in interactive mode together with 't' it is attached to the t
 ```
 docker run -it <image>
 ```
+When you run: `docker run -it ubuntu bash`, you are logged in into the bash inside the ubuntu container.
 
 ## Port Mapping
 The underlying host, where docker is installed is called docker host or docker engine.
@@ -126,6 +127,48 @@ It returns all data in a json format like state, mounts, configurations, network
 ## Container logs
 How to see the logs of a container, that runs in the background for example if it runs in detached mode?
 Use: docker logs <container name or id>
+
+# Creating Images
+You create images, if you can't find services that you want to use as part of your application, on docker hub already or you and you team decide that the application, that you develop will be dockerized for ease of shipping and deployment.
+How to create an image for a simple web application:
+1. You would start from an operating system
+2. Update the source repositories using apt
+3. Installing the dependecies using apt
+4. Install python using pip
+5. Copy the source code of the application to a location like /opt
+6. Run the webserver using the flask command
+
+You can create a `Dockerfile` that is doing this. For that, create a `Dockerfile`:
+```
+## [instruction] [argument]
+FROM ubuntu
+
+RUN apt-get update
+RUN apt-get install -y python python-pip
+RUN pip install flask
+
+COPY app.py /opt/app.py
+
+ENTRYPOINT FLASK_APP=/opt/app.py flask run
+```
+
+examples:
+```
+EXPOSE 8080 => exposes port 8080 inside the container
+WORKDIR /opt => ...
+ENTRYPOINT ["python", "app.py"] => defines 2 commands to run the a service inside a container
+```
+FROM Ubuntu => defines what the base operating system should be for this container. All Dockerfiles must start with a `FROM` instruction.
+Every docker image must be based off from another docker image. Either an os or another image that was created before based on an os.
+The RUN instruction instructs docker to run a particullar command on that image.
+The COPY instruction copies files from the local system on to the docker image.
+The ENTRYPOINT allows to specify a command that will be run when the image is run as a container.
+
+Once done, build the image using: `docker build Dockerfile -t tkeil/my-custom-app`. The '-t' option specifies the name of the image. 'tkeil' is the docker hub account name.
+To make this image available on the public docker hub, run the docker push command.
+
+When docker builds the images, it builds these in a layered architecture. Each line of instruction creates a new layer in the docker image with just the changes from the previous layers. You can see the information of the layers by running `docker history <image name>`
+So when you stop a build process, it wouldn't has to start all over again, but just from the previous layer saved in the image.
 
 ## What Does Docker Do?
 
