@@ -188,6 +188,16 @@ So when you stop a build process, it wouldn't has to start all over again, but j
 With docker you can run: `docker run -e APP_COLOR=blue <image>`
 '-e VAR_NAME=val' you can set environment variables, that can be used by the program/container. 
 
+
+### Docker Compose
+docker exec mysql-db mysql -pdb_pass123 -e 'use foo; select * from myTable'
+docker network ls
+
+docker run --name alpine-2 --network none -d alpine
+
+docker network create --driver bridge --subnet 182.18.0.0/24 --gateway 182.18.0.1 wp-mysql-network
+
+
 ## What Does Docker Do?
 
 Docker:
