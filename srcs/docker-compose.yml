@@ -1,23 +1,55 @@
 version: '3'
 services:
   nginx:
-    build: requirements/nginx
     container_name: my_nginx
+    build: requirements/nginx
     volumes:
-      - /home/${USER}/data/wordpress/:/var/www/html
+      - /home/${USER}/data/web/:/var/www/html
       - /home/tkeil/inception/srcs/requirements/nginx/tools:/etc/nginx/ssl
-      # - /home/tkeil/inception/srcs/requirements/nginx/conf/:/etc/nginx/http.d/:ro
     ports:
       - "443:443"
+    depends_on:
+      - mariadb
+      - wordpress
+    networks:
+      - inception
     restart: always
 
-  wordpress:
-    build: requirements/wordpress
+  mariadb:
+    container_name: mariadb
+    build: requirements/mariadb
+    volumes:
+      - /home/${USER}/data/mysql/:/var/lib/mysql
+    ports:
+      - "3306:3306"
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-    container_name: wordpress
+      - DB_USER_PASSWORD=${DB_USER_PASSWORD}
+      - DB_ROOT_USER=${DB_ROOT_USER}
+      - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    networks:
+      - inception
     restart: always
+
+  wordpress:
+    container_name: wordpress
+    build: requirements/wordpress
     volumes:
-      - /home/${USER}/data/wordpress/:/var/www/html
+      - /home/${USER}/data/web/:/var/www/html
+    ports:
+      - "9000:9000"
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_USER_PASSWORD=${DB_USER_PASSWORD}
+      - DB_ROOT_USER=${DB_ROOT_USER}
+      - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    depends_on:
+      - mariadb
+    networks:
+      - inception
+    restart: always
+
+networks:
+  inception:
