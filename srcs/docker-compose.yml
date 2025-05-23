@@ -1,14 +1,23 @@
 version: '3'
 services:
-  website:
-    build:
-      context: .
-      dockerfile: requirements/nginx/Dockerfile
+  nginx:
+    build: requirements/nginx
     container_name: my_nginx
     volumes:
-      - /home/tkeil/docker/website:/var/www/:ro
-      - /home/tkeil/inception/srcs/requirements/nginx/tools:/etc/nginx/ssl:ro
-      - /home/tkeil/inception/srcs/requirements/nginx/conf/:/etc/nginx/http.d/
+      - /home/${USER}/data/wordpress/:/var/www/html
+      - /home/tkeil/inception/srcs/requirements/nginx/tools:/etc/nginx/ssl
+      # - /home/tkeil/inception/srcs/requirements/nginx/conf/:/etc/nginx/http.d/:ro
     ports:
       - "443:443"
     restart: always
+
+  wordpress:
+    build: requirements/wordpress
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+    container_name: wordpress
+    restart: always
+    volumes:
+      - /home/${USER}/data/wordpress/:/var/www/html

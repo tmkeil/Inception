@@ -1,4 +1,10 @@
-FROM alpine:3.16
-RUN	apk update && apk upgrade && apk add --no-cache nginx
-EXPOSE 443
+FROM debian:bullseye
+
+RUN apt update && apt upgrade && apt install -y nginx
+
+EXPOSE 80
+#EXPOSE 443
+
+COPY ./conf/default /etc/nginx/sites-available/.
+
 CMD ["nginx", "-g", "daemon off;"]
