@@ -10,8 +10,12 @@ if [ ! -f wp-cli.phar ]; then
   chmod +x wp-cli.phar
 fi
 
-# Download WordPress
-./wp-cli.phar core download --allow-root
+# Download WordPress nur, wenn noch keine Installation vorhanden ist
+if [ ! -f wp-load.php ]; then
+  ./wp-cli.phar core download --allow-root
+else
+  echo "WordPress files already exist, skipping download."
+fi
 
 # Create wp-config.php to connect wordpress to the mariadb server
 if [ ! -f wp-config.php ]; then
@@ -23,8 +27,11 @@ if ! ./wp-cli.phar core is-installed --allow-root; then
   ./wp-cli.phar core install \
     --url="$DOMAIN_NAME" \
     --title="inception" \
-    --admin_user="$DB_ROOT_USER" \
-    --admin_password="$DB_ROOT_PASSWORD" \
-    --admin_email="admin@admin.com" \
+    --admin_user="$WP_ADMIN_USER" \
+    --admin_password="$WP_ADMIN_PASSWORD" \
+    --admin_email="$WP_ADMIN_EMAIL" \
     --allow-root
+else
+  echo "WordPress is already installed."
 fi
+

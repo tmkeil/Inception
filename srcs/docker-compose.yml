@@ -41,10 +41,14 @@ services:
       - "9000:9000"
     environment:
       - DB_NAME=${DB_NAME}
+      - DOMAIN_NAME=${DOMAIN_NAME}
       - DB_USER=${DB_USER}
       - DB_USER_PASSWORD=${DB_USER_PASSWORD}
       - DB_ROOT_USER=${DB_ROOT_USER}
       - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - WP_ADMIN_USER=${WP_ADMIN_USER}
+      - WP_ADMIN_PASSWORD=${WP_ADMIN_PASSWORD}
+      - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
     depends_on:
       - mariadb
     networks:
