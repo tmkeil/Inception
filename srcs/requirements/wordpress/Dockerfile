@@ -1,9 +1,6 @@
 FROM debian:bullseye
 
-RUN apt update && apt upgrade && apt install -y \
-	php7.4-fpm \
-	php7.4-mysql \
-	curl
+RUN apt update && apt upgrade -y && apt install -y php7.4-fpm php7.4-mysql curl
 
 EXPOSE 9000
 
