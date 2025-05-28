@@ -17,8 +17,8 @@ chown -R mysql:mysql /run/mysqld
 echo "🟢 before initializing"
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "✅ Initialisiere Datenbank..."
-    #mysql_install_db --user=mysql --datadir=/var/lib/mysql
-     mysqld --initialize-insecure --datadir=/var/lib/mysql --user=mysql
+    mysql_install_db --user=mysql --datadir=/var/lib/mysql
+    # mysqld --initialize-insecure --datadir=/var/lib/mysql --user=mysql
 
     cat << EOF > /tmp/init.sql
 USE mysql;

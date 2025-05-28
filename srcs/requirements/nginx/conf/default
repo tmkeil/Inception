@@ -94,10 +94,10 @@ server {
 #       }
 #}
 
-#server {
-#    listen 80;
-#    listen [::]:80;
-#    server_name tkeil.42.fr;
-#
-#    return 301 https://$host$request_uri;
-#}
+server {
+    listen 80;
+    listen [::]:80;
+    server_name tkeil.42.fr;
+
+    return 403;
+}

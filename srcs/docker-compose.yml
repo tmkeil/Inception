@@ -7,6 +7,7 @@ services:
       - /home/${USER}/data/web/:/var/www/html
       - /home/tkeil/inception/srcs/requirements/nginx/tools:/etc/nginx/ssl
     ports:
+      - "80:80"
       - "443:443"
     depends_on:
       - mariadb
