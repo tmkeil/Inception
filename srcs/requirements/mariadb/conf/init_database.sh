@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo "🟢 test test test1 Starte MariaDB mit Benutzer: $(whoami)"
 if [ -z "$DB_ROOT_PASSWORD" ] || [ -z "$DB_NAME" ] || [ -z "$DB_USER" ] || [ -z "$DB_USER_PASSWORD" ]; then
     echo "❌ Environment variables are missing!"
     exit 1
@@ -13,10 +14,11 @@ chown -R mysql:mysql /run/mysqld
 # Initialize the database if it does not exist
 # mariadb-install-db is deprecated and replaced by mysqld --initialize
 # --initialize is used to create the system tables and the mysql database
+echo "🟢 before initializing"
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "✅ Initialisiere Datenbank..."
-    mysql_install_db --user=mysql --datadir=/var/lib/mysql
-    # mysqld --initialize-insecure --datadir=/var/lib/mysql --user=mysql
+    #mysql_install_db --user=mysql --datadir=/var/lib/mysql
+     mysqld --initialize-insecure --datadir=/var/lib/mysql --user=mysql
 
     cat << EOF > /tmp/init.sql
 USE mysql;
@@ -43,6 +45,8 @@ EOF
 else
     echo "📁 Database already exists"
 fi
-
+echo "🟢 after finish before trying to start mariadb"
+echo "🟢 test Starte MariaDB mit Benutzer: $(whoami)"
 # start mariadb server
 exec mysqld --socket=/run/mysqld/mysqld.sock
+echo "🟢 Starte MariaDB mit Benutzer: $(whoami)"

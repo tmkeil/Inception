@@ -4,19 +4,22 @@ set -e
 
 cd /var/www/html
 
+# https://wp-cli.org/#installing
 # Download WP-CLI for WordPress management
 if [ ! -f wp-cli.phar ]; then
   curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
   chmod +x wp-cli.phar
 fi
 
-# Download WordPress nur, wenn noch keine Installation vorhanden ist
+# https://developer.wordpress.org/cli/commands/core/
+# Download WordPress
 if [ ! -f wp-load.php ]; then
   ./wp-cli.phar core download --allow-root
 else
   echo "WordPress files already exist, skipping download."
 fi
 
+# https://developer.wordpress.org/cli/commands/config/create/
 # Create wp-config.php to connect wordpress to the mariadb server
 if [ ! -f wp-config.php ]; then
   ./wp-cli.phar config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_USER_PASSWORD" --dbhost=mariadb --allow-root

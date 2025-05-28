@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # Run the WP installation script
 ./init.sh
