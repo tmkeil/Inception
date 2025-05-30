@@ -20,7 +20,7 @@ services:
     container_name: mariadb
     build: requirements/mariadb
     volumes:
-      - /home/${USER}/data/mysql/:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
     ports:
       - "3306:3306"
     environment:
@@ -37,7 +37,7 @@ services:
     container_name: wordpress
     build: requirements/wordpress
     volumes:
-      - /home/${USER}/data/web/:/var/www/html
+      - wordpress_data:/var/www/html
     ports:
       - "9000:9000"
     environment:
@@ -56,5 +56,12 @@ services:
       - inception
     restart: always
 
+volumes:
+  mariadb_data:
+    external: true
+  wordpress_data:
+    external: true
+
 networks:
   inception:
+

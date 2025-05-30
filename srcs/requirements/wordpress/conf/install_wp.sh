@@ -1,5 +1,7 @@
 #!/bin/bash
-
+echo "DB_NAME: $DB_NAME"
+echo "DB_USER: $DB_USER"
+echo "DOMAIN_NAME: $DOMAIN_NAME"
 set -e
 
 cd /var/www/html

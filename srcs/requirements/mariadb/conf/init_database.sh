@@ -1,24 +1,13 @@
 #!/bin/sh
 
-echo "🟢 test test test1 Starte MariaDB mit Benutzer: $(whoami)"
-if [ -z "$DB_ROOT_PASSWORD" ] || [ -z "$DB_NAME" ] || [ -z "$DB_USER" ] || [ -z "$DB_USER_PASSWORD" ]; then
-    echo "❌ Environment variables are missing!"
-    exit 1
+if [ ! -d /run/mysqld ]; then
+    mkdir -p /run/mysqld
+    chown mysql:mysql /run/mysqld
 fi
 
-# Create /run/mysqld directory because mysqld needs it to start and change ownership to mysql
-# user and group to avoid permission issues. Because mysql is the user and group that mariadb runs as.
-mkdir -p /run/mysqld
-chown -R mysql:mysql /run/mysqld
-
-# Initialize the database if it does not exist
-# mariadb-install-db is deprecated and replaced by mysqld --initialize
-# --initialize is used to create the system tables and the mysql database
-echo "🟢 before initializing"
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "✅ Initialisiere Datenbank..."
     mysql_install_db --user=mysql --datadir=/var/lib/mysql
-    # mysqld --initialize-insecure --datadir=/var/lib/mysql --user=mysql
 
     cat << EOF > /tmp/init.sql
 USE mysql;
@@ -34,19 +23,17 @@ GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-    echo "⚙️  Running the init script..."
-    if mysqld --user=mysql --bootstrap < /tmp/init.sql; then
-    	rm -f /tmp/init.sql
-    else
-    	echo "❌ Failed to initialize MariaDB with init.sql"
-    	cat /tmp/init.sql
-    	exit 1
+    echo "⚙️ Führe einmalig init.sql mit bootstrap aus..."
+    if ! mysqld --user=mysql --bootstrap < /tmp/init.sql; then
+        echo "❌ Fehler beim Ausführen von init.sql"
+        cat /tmp/init.sql
+        exit 1
     fi
+    rm -f /tmp/init.sql
 else
-    echo "📁 Database already exists"
+    echo "📁 Datenbank bereits initialisiert, überspringe Init."
 fi
-echo "🟢 after finish before trying to start mariadb"
-echo "🟢 test Starte MariaDB mit Benutzer: $(whoami)"
-# start mariadb server
+
+echo "🟢 Starte regulär MariaDB..."
 exec mysqld --socket=/run/mysqld/mysqld.sock
-echo "🟢 Starte MariaDB mit Benutzer: $(whoami)"
+
