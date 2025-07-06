@@ -226,11 +226,6 @@ docker run -p 80:5000 <image>
 
 This maps port 5000 in the container to port 80 on the host.
 
-Access:
-
-* From inside Docker: [http://172.17.0.2:5000](http://172.17.0.2:5000)
-* From host/browser: [http://192.168.1.5:80](http://192.168.1.5:80) (if host IP is 192.168.1.5)
-
 ## Volume Mapping (Persistent Data)
 
 To persist data outside the container:
