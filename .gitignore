@@ -1,0 +1,9 @@
+# Environment variables (credentials)
+srcs/.env
+
+# Data directories
+data/
+
+# OS files
+.DS_Store
+Thumbs.db
