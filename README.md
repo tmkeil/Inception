@@ -56,6 +56,11 @@ Build and start everything:
 make
 ```
 
+Add your domain to `/etc/hosts` so the browser can resolve it locally:
+```
+echo "127.0.0.1 <DOMAIN_NAME>" | sudo tee -a /etc/hosts
+```
+
 The site is then available at `https://<DOMAIN_NAME>`.
 
 | Command | Description |
